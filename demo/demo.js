@@ -126,6 +126,9 @@
   var keyInput = $("input-api-key");
   var keyStatus = $("key-status");
 
+  // HTTP 헤더에는 ASCII만 허용 — 한글·공백·보이지 않는 문자가 섞이면 fetch가 거부함
+  var VALID_KEY_RE = /^[\x21-\x7E]+$/;
+
   function getKey() { return localStorage.getItem(KEY_STORAGE) || ""; }
 
   function refreshKeyStatus() {
@@ -144,11 +147,16 @@
     refreshKeyStatus();
   });
   $("btn-save-key").addEventListener("click", function () {
-    var v = keyInput.value.trim();
-    if (v) {
-      localStorage.setItem(KEY_STORAGE, v);
-      keyInput.value = "";
+    // 복사 과정에서 딸려온 공백·줄바꿈·제로폭 문자 제거
+    var v = keyInput.value.replace(/[\s​-‍﻿]+/g, "");
+    if (!v) { refreshKeyStatus(); return; }
+    if (!VALID_KEY_RE.test(v)) {
+      keyStatus.textContent = "✗ 키에 허용되지 않는 문자(한글 또는 특수문자)가 섞여 있습니다. 콘솔의 복사 버튼으로 키만 다시 복사해주세요.";
+      keyStatus.className = "settings__status bad";
+      return;
     }
+    localStorage.setItem(KEY_STORAGE, v);
+    keyInput.value = "";
     refreshKeyStatus();
   });
   $("btn-clear-key").addEventListener("click", function () {
