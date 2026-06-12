@@ -59,6 +59,11 @@
       goTo(0);
     } else if (ev.key === "End") {
       goTo(TOTAL - 1);
+    } else if (ev.key === "b" || ev.key === "B") {
+      // 발표자용: 데모 실패 시 'B' 키로 섹션 8 백업 자료 즉시 토글
+      var backup = document.querySelector(".demo-backup");
+      if (backup) backup.open = !backup.open;
+      handled = false;
     } else {
       handled = false;
     }

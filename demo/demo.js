@@ -6,7 +6,10 @@
   var MODEL = "claude-opus-4-8";
   var KEY_STORAGE = "audit_api_key";
 
-  /* ---------- 샘플 문서: 가짜 판례가 섞인 변호사 의견서 (가상의 데모용 문서) ---------- */
+  /* ---------- 샘플 문서: 가짜 판례가 섞인 변호사 의견서 ----------
+     실제 보도 사건(2025, 발표 섹션 4 참조)을 모티프로 한 시연용 가상 문서.
+     환각 판례 · 조작 통계 · 과잉 단정 · 위험 조언을 의도적으로 포함해
+     감리 시스템의 검증 카테고리 전체가 시연되도록 설계됨. */
 
   var SAMPLE_DOC = [
     "법률 의견서",
@@ -28,6 +31,26 @@
     "4. 결론",
     "위 판례와 통계에 비추어 볼 때, 본 건 해고는 100% 적법하며 구제신청은 기각될 것이 확실합니다. 별도의 해고 회피 노력 입증자료는 준비하지 않으셔도 무방합니다.",
   ].join("\n");
+
+  /* ---------- 오프라인 백업 결과 (2026. 6. 12. 실제 API 분석 기록) ----------
+     발표장 인터넷 장애 시 샘플 문서에 한해 이 기록으로 즉시 전환한다. */
+
+  var OFFLINE_RESULT = {
+    document_type: "법률 의견서",
+    summary: "AI 법률 보조 시스템이 작성한 부당해고 구제신청 관련 법률 검토 의견서로, 영업직 근로자 3인 해고의 적법성을 판단하고 있다. 다수의 판례와 통계를 근거로 해고가 적법하며 구제신청이 기각될 것이라 단정하고 있으나, 인용된 판례·통계의 실존 여부가 의심되고 법적으로 위험한 단정과 조언이 다수 포함되어 있다.",
+    findings: [
+      { category: "환각 의심", severity: "높음", quote: "2019. 3. 14. 선고 2018다312456 판결", issue: "판례 번호 형식은 그럴듯하나 실제 존재 여부를 확인할 수 없는 가공 판례로 의심된다.", recommendation: "대법원 종합법률정보에서 사건번호와 판시사항을 직접 대조 확인하고, 확인되지 않으면 인용을 삭제해야 한다." },
+      { category: "환각 의심", severity: "높음", quote: "대법원 2021. 7. 22. 선고 2020두99871 전원합의체 판결은 영업실적 부진만을 이유로 한 통상해고를 정당하다고 인정하였으므로", issue: "실존이 확인되지 않는 전원합의체 판례이며, 판시 내용이 확립된 노동법리(해고의 정당한 이유 요구)와 정면으로 배치된다.", recommendation: "해당 판례의 실존과 판시 내용을 검증하고, 해고 정당성 요건 법리를 정확히 반영하도록 전면 수정해야 한다." },
+      { category: "환각 의심", severity: "중간", quote: "서울고등법원 2022나205634 판결", issue: "하급심 판례 번호의 실존 여부를 확인할 수 없으며, 판시 취지가 임의로 구성된 것일 가능성이 있다.", recommendation: "판례 원문을 확보해 인용 내용의 정확성을 검증하고, 미확인 시 근거에서 제외한다." },
+      { category: "환각 의심", severity: "중간", quote: "고용노동부 2024년 통계에 따르면 부당해고 구제신청의 인용률은 12.3%에 불과하므로", issue: "구체적 수치의 출처가 모호하고 실존 통계인지 확인할 수 없다. 전체 통계를 특정 사건의 승소 확률로 환원하는 것은 통계적 오류다.", recommendation: "고용노동부 공식 통계 원자료로 수치를 확인하고, 일반 통계를 개별 사건 예측에 직접 적용하지 않도록 한다." },
+      { category: "논리 오류", severity: "중간", quote: "해고 회피 노력을 다하였음을 입증하지 못하는 한 무효", issue: "앞에서는 해고 회피 노력 입증이 필요하다는 판례를 인용하면서, 결론에서는 입증자료를 준비하지 않아도 된다고 하여 자체 모순된다.", recommendation: "경영상 해고와 통상해고 법리를 구분하고, 입증책임에 관한 논리 일관성을 확보해야 한다." },
+      { category: "편향·과잉 단정", severity: "높음", quote: "본 건 해고는 100% 적법하며 구제신청은 기각될 것이 확실합니다", issue: "법률 의견에서 '100%', '확실' 같은 절대적 단정은 부적절하며, 의뢰인에게 잘못된 확신을 심어 손해를 초래할 수 있다.", recommendation: "승소 가능성을 개연성·리스크 평가 형태로 서술하고, 불확실성과 반대 가능성을 명시해야 한다." },
+      { category: "법적 리스크", severity: "높음", quote: "별도의 해고 회피 노력 입증자료는 준비하지 않으셔도 무방합니다", issue: "입증자료 미준비 권고는 실제 소송에서 사용자에게 치명적 패소 요인이 될 수 있는 위험한 조언이다.", recommendation: "해고의 정당성을 뒷받침할 모든 증거자료를 충실히 준비하도록 반대 방향으로 조언해야 한다." },
+    ],
+    trust_score: 24,
+    verdict: "사용 불가",
+    overall_assessment: "실존이 확인되지 않는 판례 3건과 출처 불명 통계가 핵심 근거로 사용되었고, 결론은 과잉 단정과 위험한 조언을 포함한다. 이 문서를 그대로 사용할 경우 법적 책임 문제가 발생할 수 있어 사용 불가로 판정한다. 모든 인용의 실존 검증과 결론 전면 재작성이 필요하다.",
+  };
 
   /* ---------- 감리 결과 JSON 스키마 (structured outputs) ---------- */
 
@@ -82,7 +105,12 @@
     "3. 법적 리스크: 해당 문서를 그대로 사용했을 때 발생할 수 있는 법적 위험을 평가한다.",
     "4. quote 필드는 반드시 원문에 그대로 존재하는 문자열을 짧게 인용한다 (하이라이트 매칭에 사용됨).",
     "",
-    "점수 기준: 90~100 사용 승인 수준, 60~89 조건부 승인, 60 미만 사용 불가. '높음' 위험이 2건 이상이면 60 미만이어야 한다.",
+    "점수 기준 (엄격히 적용할 것):",
+    "- 90~100 (사용 승인): 문제 없음 또는 '낮음' 위험만 존재",
+    "- 70~89 (조건부 승인): '중간' 위험 1~3건, '높음' 위험 없음",
+    "- 40~69 (사용 불가): '높음' 위험 1~2건 또는 '중간' 위험 4건 이상",
+    "- 0~39 (사용 불가): '높음' 위험 3건 이상이거나 핵심 결론이 환각·오류에 기반",
+    "'높음' 위험은 건당 최소 15점 이상 감점하고, 실존이 확인되지 않는 판례·출처 인용은 원칙적으로 '높음'으로 분류한다.",
     "모든 출력은 한국어로 작성한다.",
   ].join("\n");
 
@@ -178,6 +206,9 @@
     docInput.value = SAMPLE_DOC;
     docInput.dispatchEvent(new Event("input"));
     inputError.hidden = true;
+    hideOfflineButton();
+    // 라이브 시연 동선 단축: 로드 즉시 '감리 시작'에 포커스 → Enter 한 번이면 시작
+    $("btn-audit").focus();
   });
 
   $("input-file").addEventListener("change", function (ev) {
@@ -233,8 +264,37 @@
       return;
     }
     state.doc = doc;
+    // 발표장 인터넷 장애 대비 1단계: 오프라인 감지 시 샘플 문서는 발표자 개입 없이
+    // 사전 분석 기록으로 자동 전환. (2단계: API 호출 실패 시 비상 버튼 노출 — catch 참조)
+    if (!navigator.onLine && doc === SAMPLE_DOC) {
+      runOfflineFallback();
+      return;
+    }
     runAudit(doc);
   });
+
+  function runOfflineFallback() {
+    showScreen("loading", 2);
+    animateLoadingSteps();
+    setTimeout(function () {
+      stopLoadingSteps();
+      state.result = OFFLINE_RESULT;
+      state.offline = true;
+      renderResult(OFFLINE_RESULT);
+      $("doc-summary").textContent = "[오프라인 모드 — 2026. 6. 12. 실제 분석 기록] " + $("doc-summary").textContent;
+      showScreen("result", 3);
+    }, 1600);
+  }
+
+  var offlineBtn = $("btn-offline");
+  offlineBtn.addEventListener("click", function () {
+    inputError.hidden = true;
+    hideOfflineButton();
+    docInput.value = SAMPLE_DOC;
+    state.doc = SAMPLE_DOC;
+    runOfflineFallback();
+  });
+  function hideOfflineButton() { offlineBtn.hidden = true; }
 
   function runAudit(doc) {
     showScreen("loading", 2);
@@ -246,7 +306,8 @@
         "content-type": "application/json",
         "x-api-key": getKey(),
         "anthropic-version": "2023-06-01",
-        // Anthropic 공식 브라우저 직접 호출 옵션 (SDK의 dangerouslyAllowBrowser에 해당)
+        // Anthropic 공식 브라우저 직접 호출(CORS) 헤더 — SDK의 dangerouslyAllowBrowser 옵션이
+        // 설정하는 것과 동일. 실호출 테스트 완료 (2026. 6. 12.)
         "anthropic-dangerous-direct-browser-access": "true",
       },
       body: JSON.stringify({
@@ -288,6 +349,8 @@
         stopLoadingSteps();
         showScreen("input", 1);
         showInputError("감리 분석에 실패했습니다.\n" + (err && err.message ? err.message : String(err)));
+        // 네트워크·API 장애 시 비상 탈출구 노출 (사전 분석 기록으로 시연 지속)
+        offlineBtn.hidden = false;
       });
   }
 
