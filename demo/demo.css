@@ -320,6 +320,45 @@ body {
 .finding__sev--high { background: rgba(249,97,103,.12); color: var(--coral); }
 .finding__sev--mid { background: rgba(249,200,70,.2); color: var(--amber); }
 .finding__sev--low { background: rgba(100,116,139,.12); color: var(--muted); }
+.finding__review { display: inline-flex; gap: 6px; margin-left: auto; }
+.rev-btn {
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  font-weight: 800;
+  border: 1.5px solid var(--line);
+  border-radius: 999px;
+  padding: 4px 13px;
+  background: #fff;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all .15s ease;
+}
+.rev-btn:hover { border-color: var(--navy); color: var(--navy); }
+.rev-btn--ok.is-on { background: rgba(22,163,74,.12); border-color: var(--green); color: var(--green); }
+.rev-btn--no.is-on { background: rgba(249,97,103,.12); border-color: var(--coral); color: var(--coral); }
+.finding.is-rejected { opacity: .45; }
+.finding.is-rejected .finding__quote { text-decoration: line-through; }
+.finding.is-accepted { background: rgba(22,163,74,.03); }
+
+.review-note {
+  font-size: 13.5px;
+  color: var(--muted);
+  background: rgba(249,200,70,.14);
+  border: 1.5px solid rgba(249,200,70,.5);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+}
+.review-note b { color: var(--ink); }
+.review-progress {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+.review-progress b { color: var(--navy); }
+.review-actions { margin-top: 4px; }
+
 .finding__quote {
   font-size: 13.5px;
   color: var(--ink);

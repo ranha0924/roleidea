@@ -126,7 +126,8 @@
   var reportWrap = $("report-wrap");
   var appEl = $("app");
 
-  var state = { doc: "", result: null, reportNo: "" };
+  // reviews: 발견 사항별 감리사 검토 상태 ("accepted" | "rejected" | null)
+  var state = { doc: "", result: null, reportNo: "", reviews: [], offline: false };
 
   /* ---------- 화면 전환 + 스테퍼 ---------- */
 
@@ -401,20 +402,26 @@
     $("doc-summary").textContent = "[" + r.document_type + "] " + r.summary;
     $("finding-count").textContent = r.findings.length ? "— " + r.findings.length + "건 발견" : "— 문제 없음";
 
-    // 발견 사항 카드
+    // 발견 사항 카드 (감리사 검토 버튼 포함 — AI 분석은 제안일 뿐, 확정은 사람이 한다)
+    state.reviews = r.findings.map(function () { return null; });
     var list = $("findings-list");
-    list.innerHTML = r.findings.map(function (f) {
+    list.innerHTML = r.findings.map(function (f, i) {
       var sev = SEV_CLASS[f.severity] || "low";
-      return '<div class="finding finding--' + sev + '">' +
+      return '<div class="finding finding--' + sev + '" data-idx="' + i + '">' +
         '<div class="finding__head">' +
         '<span class="finding__cat">' + escapeHtml(f.category) + "</span>" +
         '<span class="finding__sev finding__sev--' + sev + '">위험도 ' + escapeHtml(f.severity) + "</span>" +
+        '<span class="finding__review">' +
+        '<button type="button" class="rev-btn rev-btn--ok" data-idx="' + i + '" data-act="accept">✓ 인정</button>' +
+        '<button type="button" class="rev-btn rev-btn--no" data-idx="' + i + '" data-act="reject">✕ 제외</button>' +
+        "</span>" +
         "</div>" +
         '<p class="finding__quote">“' + escapeHtml(f.quote) + "”</p>" +
         '<p class="finding__issue">' + escapeHtml(f.issue) + "</p>" +
         '<p class="finding__rec"><b>권고:</b> ' + escapeHtml(f.recommendation) + "</p>" +
         "</div>";
     }).join("") || '<p class="panel__desc">발견된 문제가 없습니다.</p>';
+    updateReviewUI();
 
     // 원문 하이라이트 (긴 인용부터 매칭해 중첩 방지)
     var html = escapeHtml(state.doc);
@@ -445,6 +452,52 @@
     requestAnimationFrame(tick);
   }
 
+  /* ---------- 감리사 검토 (human-in-the-loop) ---------- */
+
+  $("findings-list").addEventListener("click", function (ev) {
+    var btn = ev.target.closest ? ev.target.closest(".rev-btn") : null;
+    if (!btn) return;
+    var i = parseInt(btn.getAttribute("data-idx"), 10);
+    state.reviews[i] = btn.getAttribute("data-act") === "accept" ? "accepted" : "rejected";
+    updateReviewUI();
+  });
+
+  $("btn-accept-rest").addEventListener("click", function () {
+    state.reviews = state.reviews.map(function (v) { return v || "accepted"; });
+    updateReviewUI();
+  });
+
+  function updateReviewUI() {
+    var total = state.reviews.length;
+    var decided = state.reviews.filter(function (v) { return v !== null; }).length;
+
+    document.querySelectorAll("#findings-list .finding").forEach(function (card) {
+      var i = parseInt(card.getAttribute("data-idx"), 10);
+      var v = state.reviews[i];
+      card.classList.toggle("is-rejected", v === "rejected");
+      card.classList.toggle("is-accepted", v === "accepted");
+      var ok = card.querySelector(".rev-btn--ok");
+      var no = card.querySelector(".rev-btn--no");
+      if (ok) ok.classList.toggle("is-on", v === "accepted");
+      if (no) no.classList.toggle("is-on", v === "rejected");
+    });
+
+    var progress = $("review-progress");
+    var reportBtn = $("btn-report");
+    if (total === 0) {
+      progress.textContent = "검토할 발견 사항 없음 — 바로 발행 가능";
+      reportBtn.disabled = false;
+    } else if (decided < total) {
+      progress.innerHTML = "감리사 검토 <b>" + decided + " / " + total + "</b> — 전 항목 확정 후 발행 가능";
+      reportBtn.disabled = true;
+    } else {
+      var acc = state.reviews.filter(function (v) { return v === "accepted"; }).length;
+      progress.innerHTML = "✓ 검토 완료 — 인정 <b>" + acc + "</b> · 제외 <b>" + (total - acc) + "</b>";
+      reportBtn.disabled = false;
+    }
+    $("btn-accept-rest").hidden = total === 0 || decided === total;
+  }
+
   $("btn-restart").addEventListener("click", function () {
     showScreen("input", 1);
   });
@@ -452,6 +505,7 @@
   /* ---------- 화면 4: 감리 보고서 ---------- */
 
   $("btn-report").addEventListener("click", function () {
+    if ($("btn-report").disabled) return;
     renderReport(state.result);
     showScreen("report", 4);
   });
@@ -480,8 +534,16 @@
     $("report-summary").textContent = r.summary;
     $("report-overall").textContent = r.overall_assessment;
 
+    // 감리 방식 기록 — AI는 1차 분석, 확정·책임은 감리사
+    var total = r.findings.length;
+    var accepted = r.findings.filter(function (_, i) { return state.reviews[i] === "accepted"; });
+    var rejected = total - accepted.length;
+    $("report-review").textContent = total === 0
+      ? "AI 1차 분석 (발견 사항 없음) + 감리사 최종 확인"
+      : "AI 1차 분석 " + total + "건 → 감리사 항목별 검토 확정: 인정 " + accepted.length + "건 · 제외 " + rejected + "건";
+
     var tbody = $("report-findings").querySelector("tbody");
-    tbody.innerHTML = r.findings.map(function (f) {
+    tbody.innerHTML = accepted.map(function (f) {
       var sev = SEV_CLASS[f.severity] || "low";
       return "<tr>" +
         "<td>" + escapeHtml(f.category) + "</td>" +
@@ -489,7 +551,10 @@
         '<td class="quote">“' + escapeHtml(f.quote) + "”</td>" +
         "<td>" + escapeHtml(f.issue) + "<br><b>권고:</b> " + escapeHtml(f.recommendation) + "</td>" +
         "</tr>";
-    }).join("") || '<tr><td colspan="4">발견된 문제 없음</td></tr>';
+    }).join("") || '<tr><td colspan="4">감리사가 확정한 발견 사항 없음</td></tr>';
+    if (rejected > 0) {
+      tbody.innerHTML += '<tr><td colspan="4" class="quote">※ AI가 제안한 ' + rejected + "건은 감리사 검토에서 제외됨</td></tr>";
+    }
   }
 
   function pad(n) { return (n < 10 ? "0" : "") + n; }

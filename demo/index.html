@@ -96,14 +96,17 @@
         </div>
         <div class="verdict" id="verdict-badge">—</div>
         <p class="score-panel__assessment" id="overall-assessment"></p>
-        <button class="btn btn--primary btn--lg" id="btn-report" type="button">✍️ 감리 보고서 발행</button>
+        <p class="review-progress" id="review-progress"></p>
+        <button class="btn btn--primary btn--lg" id="btn-report" type="button" disabled>✍️ 감리 보고서 발행</button>
         <button class="btn btn--ghost" id="btn-restart" type="button">새 문서 감리</button>
       </section>
 
       <section class="panel">
         <h2>② 리스크 검증 결과 <span class="finding-count" id="finding-count"></span></h2>
         <p class="panel__desc" id="doc-summary"></p>
+        <p class="review-note">AI의 1차 분석입니다 — <b>감리사가 각 항목을 인정/제외로 확정해야 보고서를 발행할 수 있습니다</b></p>
         <div id="findings-list"></div>
+        <div class="review-actions"><button class="btn btn--ghost" id="btn-accept-rest" type="button" hidden>남은 항목 모두 인정</button></div>
         <h3 class="doc-view__title">원문 (문제 구절 하이라이트)</h3>
         <div class="doc-view" id="doc-view"></div>
       </section>
@@ -141,6 +144,7 @@
     <table class="report-meta">
       <tr><th>감리 일시</th><td id="report-date"></td><th>문서 유형</th><td id="report-doctype"></td></tr>
       <tr><th>신뢰 점수</th><td id="report-score"></td><th>감리 판정</th><td id="report-verdict"></td></tr>
+      <tr><th>감리 방식</th><td colspan="3" id="report-review"></td></tr>
     </table>
 
     <h2>1. 문서 요약</h2>
