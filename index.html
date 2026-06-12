@@ -28,6 +28,7 @@
           <text class="stamp__ko" x="100" y="148" text-anchor="middle">완 료</text>
         </svg>
       </div>
+      <p class="stamp-caption" data-reveal style="--d: .85s;">AI를 검증하고, 결과에 책임지는 서명</p>
       <p class="presenter" data-reveal style="--d: .55s;">발표자 <strong>란하</strong></p>
     </div>
   </section>
@@ -102,7 +103,7 @@
         </div>
       </div>
 
-      <p class="source" data-reveal style="--d: .5s;">출처: WEF Future of Jobs Report 2025 (55개국, 1,000+ 기업, 1,400만 근로자 조사)</p>
+      <p class="source" data-reveal style="--d: .5s;">출처: <a href="https://www.weforum.org/publications/the-future-of-jobs-report-2025/" target="_blank" rel="noopener">WEF Future of Jobs Report 2025</a> (55개국, 1,000+ 기업, 1,400만 근로자 조사)</p>
     </div>
   </section>
 
@@ -124,13 +125,14 @@
           <p class="alert-card__body">부당해고 사건에서 노무사가 AI가 생성한 실존하지 않는 판례 10건 제출</p>
         </div>
         <div class="alert-card" data-reveal style="--d: .65s;">
-          <span class="alert-card__tag">2025 · 미국 대형 로펌</span>
+          <span class="alert-card__tag">2025. 5 · 미국 연방법원</span>
           <p class="alert-card__head">$31,000 제재</p>
-          <p class="alert-card__body">K&amp;L Gates 등이 AI 환각 인용으로 약 3만 달러 제재</p>
+          <p class="alert-card__body">K&amp;L Gates 등 대형 로펌이 AI 환각 인용 서면 제출로 캘리포니아 연방법원에서 약 3만 1천 달러 제재</p>
         </div>
       </div>
 
       <p class="fact-note" data-reveal style="--d: .85s;">※ 대법원 법원행정처는 2025년 <b>'AI 환각 대응 TF'</b>를 출범 — 가짜 판례 제출 시 소송비용 부과·징계 의뢰 방안 논의</p>
+      <p class="source" data-reveal style="--d: .95s;">출처: 법률신문·디지털데일리 보도 (2025), 미국 연방법원 제재 결정 (K&amp;L Gates 외, 2025) — 모두 실제 사건</p>
 
       <div class="question-box" data-reveal style="--d: 1.05s;">
         AI가 만든 결과물 — <span class="accent">누가 검증하고, 누가 책임지는가?</span>
@@ -161,6 +163,7 @@
             <span class="chip">의료·금융 보고서</span>
             <span class="chip">공공 문서</span>
           </div>
+          <p class="define-card__liability">서명은 상징이 아니라 책임 — 감리 과실은 건축 감리사와 동일하게 <b>배상·징계의 대상</b>이 된다</p>
           <div class="sign-line"><span>감리사</span><span class="sig">란하 ✓</span><span>(서명)</span></div>
         </div>
       </div>
@@ -204,6 +207,7 @@
       </div>
 
       <p class="punch" data-reveal style="--d: 1.05s;">건축 감리사가 준공 서명을 하듯, AI 감리사는 <span class="accent">'AI 산출물 사용 승인'</span>에 서명한다</p>
+      <p class="fact-note" data-reveal style="--d: 1.2s; margin-top: clamp(10px,1vw,16px); margin-bottom: 0;">※ 발행 후에는 <b>이의신청 → 재감리</b> 절차가 따른다 — 감리사 자신도 검증받는 구조 (판결에 항소 제도가 있는 것과 동일)</p>
     </div>
   </section>
 
@@ -217,9 +221,9 @@
         <div class="tnode tnode--kr" data-reveal style="--d: .25s;">
           <div class="tcard">
             <p class="tcard__date">2026. 1. 22</p>
-            <span class="tcard__badge">세계 최초 전면 AI 규제 국가</span>
+            <span class="tcard__badge">세계 최초 포괄적 AI 규제법 시행국</span>
             <p class="tcard__head">한국 「AI기본법」 시행</p>
-            <p class="tcard__body">의료·금융·수사 등 '고영향 AI'에 위험관리·신뢰성 확보 의무 부과</p>
+            <p class="tcard__body">의료·금융·수사 등 '고영향 AI' 사업자에 안전성·신뢰성 확보 책무 부과 (제34조) + 영향평가 (제35조)</p>
           </div>
         </div>
         <div class="tnode" data-reveal style="--d: .45s;">
@@ -239,6 +243,7 @@
       </div>
 
       <p class="punch" data-reveal style="--d: .9s;">검증은 '선택'이 아니라 <span class="accent">'법적 의무'</span>가 된다 → 의무가 있는 곳에 직업이 생긴다</p>
+      <p class="fact-note" data-reveal style="--d: 1.05s; margin-top: clamp(10px,1vw,16px); margin-bottom: 0;">진입 경로: 지금은 기업 내부 AI 검증 체계 구축기 → 초기 시장은 법무법인·병원·금융사의 <b>외부 검수 서비스</b> → EU 고위험 규제 발효(2027)가 본격 수요 기점</p>
     </div>
   </section>
 
@@ -247,7 +252,7 @@
     <div class="slide__inner">
       <p class="kicker" data-reveal style="justify-content:center;">구현품 — LIVE DEMO</p>
       <h2 class="slide__title" data-reveal style="--d: .1s;">그래서, <span class="accent">직접 만들어봤습니다</span></h2>
-      <p class="slide__lead" data-reveal style="--d: .25s;">AI 감리사가 사용하게 될 도구 — 감리 시스템 프로토타입</p>
+      <p class="slide__lead" data-reveal style="--d: .25s;">AI 감리사가 사용하게 될 도구 — 감리 시스템 프로토타입<br><span class="lead-link">방금 보신 접수 → 검증 → 점수화 → 보고서 발행, 4단계가 그대로 작동합니다</span></p>
 
       <div data-reveal style="--d: .45s;">
         <a class="demo-cta" href="demo/" target="_blank" rel="noopener">
@@ -256,11 +261,18 @@
       </div>
 
       <details class="demo-backup" data-reveal style="--d: .6s;">
-        <summary>⛑ 백업 시연 자료 (시연 실패 대비)</summary>
-        <div class="demo-backup__grid">
-          <div class="demo-backup__slot">① 문서 업로드 화면<br>(스크린샷 추가 예정)</div>
-          <div class="demo-backup__slot">② 감리 분석 결과 화면<br>(스크린샷 추가 예정)</div>
-          <div class="demo-backup__slot">③ 감리 보고서 PDF<br>(스크린샷 추가 예정)</div>
+        <summary>⛑ 백업 시연 자료 — 사전 실행해 둔 실제 분석 기록 (2026. 6. 12. · 오프라인 표시용)</summary>
+        <div class="backup-record">
+          <p class="backup-record__head">실제 판례 형식을 모방한 시연용 법률 의견서 샘플 → 시스템이 <b>문제 7건</b>을 발견 (실제 API 분석 결과)</p>
+          <table class="backup-record__table">
+            <tr><th>구분</th><th>위험도</th><th>발견 내용</th></tr>
+            <tr><td>환각 의심</td><td class="sev-high">높음 ×2</td><td>실존하지 않는 대법원 판례 2건 (2018다312456 등) 적발</td></tr>
+            <tr><td>환각 의심</td><td class="sev-mid">중간 ×2</td><td>미확인 고등법원 판례 · 출처 불명 통계(인용률 12.3%)</td></tr>
+            <tr><td>편향·과잉 단정</td><td class="sev-high">높음</td><td>"100% 적법하며 ~ 확실합니다" — 법률 의견의 절대 단정</td></tr>
+            <tr><td>법적 리스크</td><td class="sev-high">높음</td><td>"입증자료 준비 안 해도 무방" — 패소 유발 위험 조언</td></tr>
+            <tr><td>논리 오류</td><td class="sev-mid">중간</td><td>인용 판례와 결론이 서로 모순 — 문서 전체 일관성까지 검증</td></tr>
+          </table>
+          <p class="backup-record__foot">→ 신뢰 점수 60점 미만 · 판정 <b>"사용 불가"</b> · 감리 보고서(서명: 란하) 발행 완료</p>
         </div>
       </details>
     </div>
@@ -281,20 +293,20 @@
         </svg>
         <div class="network__center">AI 결과물<br>감리사<small>CORE</small></div>
         <div class="network__card network__card--tl">
-          <h3>AI 감리 교육자</h3>
-          <p>감리사 양성 과정·국가 자격증 교육</p>
+          <h3>AI 감리 교육자 <small>지금부터</small></h3>
+          <p>감리사 양성 과정·국가 자격증 교육 — 규제 시행과 함께 수요 시작</p>
         </div>
         <div class="network__card network__card--tr">
-          <h3>AI 리스크 보험설계사</h3>
-          <p>감리 점수 기반 'AI 오류 배상보험' 설계</p>
+          <h3>AI 리스크 보험설계사 <small>2027~</small></h3>
+          <p>감리 점수 기반 'AI 오류 배상보험' 설계 — 감리 시장 형성 이후</p>
         </div>
         <div class="network__card network__card--bl">
-          <h3>감리 표준 개발자</h3>
-          <p>산업별 AI 감리 기준·체크리스트 표준화</p>
+          <h3>감리 표준 개발자 <small>지금부터</small></h3>
+          <p>산업별 AI 감리 기준·체크리스트 표준화 — 모델이 바뀔 때마다 갱신</p>
         </div>
         <div class="network__card network__card--br">
-          <h3>AI 신뢰 인증기관 심사원</h3>
-          <p>기업의 AI 운영 체계를 기관 차원에서 인증</p>
+          <h3>AI 신뢰 인증기관 심사원 <small>2027~</small></h3>
+          <p>기업의 AI 운영 체계를 기관 차원에서 인증 — EU 고위험 규제 발효 이후</p>
         </div>
       </div>
 
@@ -303,11 +315,12 @@
   </section>
 
   <!-- ==================== SECTION 10 — 마무리 ==================== -->
-  <section class="slide slide--dark s10" id="s10" style="--stamp-delay: 2.4s;">
+  <section class="slide slide--dark s10" id="s10" style="--stamp-delay: 2.8s;">
     <div class="slide__inner">
       <p class="closing__old" data-reveal>"AI가 일자리를 없앨까?"</p>
       <p class="closing__new" data-reveal style="--d: .7s;">질문이 틀렸습니다.<br>"어떤 직업으로 <span class="accent">바뀔까?</span>"</p>
       <p class="closing__point" data-reveal style="--d: 1.5s;">AI 시대의 신뢰는, 결국 사람의 서명에서 나온다</p>
+      <p class="closing__pledge" data-reveal style="--d: 2.1s;">그리고 저는, 그 첫 번째 감리사가 되겠습니다</p>
       <div class="stamp" data-stamp>
         <svg viewBox="0 0 200 200" aria-hidden="true">
           <circle cx="100" cy="100" r="93" fill="none" stroke="currentColor" stroke-width="6"/>
@@ -318,7 +331,7 @@
           <text class="stamp__ko" x="100" y="148" text-anchor="middle">완 료</text>
         </svg>
       </div>
-      <p class="closing__thanks" data-reveal style="--d: 2.9s;">감사합니다 — <strong>란하</strong></p>
+      <p class="closing__thanks" data-reveal style="--d: 3.6s;">감사합니다 — <strong>란하</strong></p>
     </div>
   </section>
 
