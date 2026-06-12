@@ -3,55 +3,167 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI 감리 시스템 — 데모 준비 중</title>
+  <title>AI 감리 시스템 — AI Output Auditor</title>
   <link rel="stylesheet" href="../css/fonts.css">
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: var(--font-sans);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(160deg, #2F3C7E 0%, #1A2148 80%);
-      color: #fff;
-      text-align: center;
-      padding: 24px;
-      word-break: keep-all;
-    }
-    .box { max-width: 640px; }
-    .badge {
-      display: inline-block;
-      font-size: 14px;
-      font-weight: 800;
-      letter-spacing: .12em;
-      color: #F9C846;
-      border: 1.5px solid rgba(249, 200, 70, .5);
-      border-radius: 999px;
-      padding: 6px 18px;
-      margin-bottom: 22px;
-    }
-    h1 { font-size: clamp(30px, 5vw, 48px); font-weight: 900; margin-bottom: 14px; }
-    p { font-size: clamp(15px, 2vw, 19px); color: rgba(255, 255, 255, .75); margin-bottom: 32px; }
-    a {
-      display: inline-block;
-      font-weight: 700;
-      color: #fff;
-      background: #F96167;
-      text-decoration: none;
-      border-radius: 999px;
-      padding: 13px 30px;
-      transition: transform .2s ease;
-    }
-    a:hover { transform: translateY(-2px); }
-  </style>
+  <link rel="stylesheet" href="demo.css">
 </head>
 <body>
-  <div class="box">
-    <span class="badge">COMING SOON</span>
-    <h1>AI 감리 시스템 데모</h1>
-    <p>업로드 → 리스크 검증 → 신뢰 점수 → 감리 보고서 발행<br>데모 앱은 현재 준비 중입니다.</p>
-    <a href="../">← 발표로 돌아가기</a>
+
+<div class="app" id="app">
+
+  <!-- 헤더 -->
+  <header class="topbar">
+    <a class="topbar__back" href="../">← 발표로</a>
+    <div class="topbar__title">
+      <span class="topbar__logo">✓</span>
+      AI 감리 시스템 <small>AI Output Auditor — Prototype</small>
+    </div>
+    <button class="topbar__settings" id="btn-settings" type="button">⚙ API 설정</button>
+  </header>
+
+  <!-- 프로세스 스테퍼 (발표 섹션 6의 4단계와 1:1 대응) -->
+  <ol class="stepper" id="stepper">
+    <li class="stepper__step is-active" data-step="1"><b>1</b> 산출물 접수</li>
+    <li class="stepper__step" data-step="2"><b>2</b> 리스크 검증</li>
+    <li class="stepper__step" data-step="3"><b>3</b> 신뢰 점수화</li>
+    <li class="stepper__step" data-step="4"><b>4</b> 보고서 발행</li>
+  </ol>
+
+  <!-- API 키 설정 패널 -->
+  <section class="panel settings" id="settings-panel" hidden>
+    <h2>Anthropic API 키 설정</h2>
+    <p class="settings__note">
+      키는 이 브라우저의 localStorage에만 저장되며 Anthropic API 외 어디에도 전송되지 않습니다.
+      키 발급: <b>console.anthropic.com → API Keys</b>
+    </p>
+    <div class="settings__row">
+      <input type="password" id="input-api-key" placeholder="sk-ant-..." autocomplete="off">
+      <button class="btn btn--primary" id="btn-save-key" type="button">저장</button>
+      <button class="btn btn--ghost" id="btn-clear-key" type="button">삭제</button>
+    </div>
+    <p class="settings__status" id="key-status"></p>
+  </section>
+
+  <!-- 화면 1: 산출물 접수 -->
+  <main class="screen" id="screen-input">
+    <section class="panel">
+      <h2>① 감리 대상 AI 산출물 접수</h2>
+      <p class="panel__desc">AI가 생성한 문서를 붙여넣거나, 파일을 올리거나, 샘플을 불러오세요.</p>
+
+      <div class="input-actions">
+        <button class="btn btn--sample" id="btn-sample" type="button">📄 샘플 불러오기 — 가짜 판례가 섞인 변호사 의견서</button>
+        <label class="btn btn--ghost" for="input-file">📁 파일 업로드 (.txt / .md)</label>
+        <input type="file" id="input-file" accept=".txt,.md,text/plain,text/markdown" hidden>
+      </div>
+
+      <textarea id="input-doc" placeholder="여기에 감리할 문서를 붙여넣으세요..." spellcheck="false"></textarea>
+      <div class="input-meta">
+        <span id="char-count">0자</span>
+        <button class="btn btn--primary btn--lg" id="btn-audit" type="button">🔍 감리 시작</button>
+      </div>
+      <p class="error" id="input-error" hidden></p>
+    </section>
+  </main>
+
+  <!-- 화면 2: 리스크 검증 (분석 중) -->
+  <main class="screen" id="screen-loading" hidden>
+    <section class="panel panel--center">
+      <div class="spinner"></div>
+      <h2 id="loading-msg">AI 감리 분석 중…</h2>
+      <p class="panel__desc">환각 · 편향 · 법적 리스크를 항목별로 검증하고 있습니다</p>
+      <ul class="loading-steps" id="loading-steps">
+        <li>사실 주장 및 인용 추출</li>
+        <li>환각(실존하지 않는 판례·출처) 검증</li>
+        <li>편향·과잉 단정 표현 분석</li>
+        <li>법적 리스크 평가</li>
+        <li>신뢰 점수 산출</li>
+      </ul>
+    </section>
+  </main>
+
+  <!-- 화면 3: 결과 (신뢰 점수 + 발견 사항) -->
+  <main class="screen" id="screen-result" hidden>
+    <div class="result-grid">
+      <section class="panel score-panel">
+        <h2>③ 신뢰 점수</h2>
+        <div class="score-ring">
+          <svg viewBox="0 0 120 120">
+            <circle class="score-ring__bg" cx="60" cy="60" r="52"/>
+            <circle class="score-ring__bar" id="score-bar" cx="60" cy="60" r="52"/>
+          </svg>
+          <div class="score-ring__num"><span id="score-num">0</span><small>/100</small></div>
+        </div>
+        <div class="verdict" id="verdict-badge">—</div>
+        <p class="score-panel__assessment" id="overall-assessment"></p>
+        <button class="btn btn--primary btn--lg" id="btn-report" type="button">✍️ 감리 보고서 발행</button>
+        <button class="btn btn--ghost" id="btn-restart" type="button">새 문서 감리</button>
+      </section>
+
+      <section class="panel">
+        <h2>② 리스크 검증 결과 <span class="finding-count" id="finding-count"></span></h2>
+        <p class="panel__desc" id="doc-summary"></p>
+        <div id="findings-list"></div>
+        <h3 class="doc-view__title">원문 (문제 구절 하이라이트)</h3>
+        <div class="doc-view" id="doc-view"></div>
+      </section>
+    </div>
+  </main>
+
+</div>
+
+<!-- 화면 4: 감리 보고서 (인쇄/PDF 저장용 시트) -->
+<div class="report-wrap" id="report-wrap" hidden>
+  <div class="report-toolbar">
+    <button class="btn btn--ghost" id="btn-report-back" type="button">← 결과로 돌아가기</button>
+    <button class="btn btn--primary" id="btn-print" type="button">🖨 PDF로 저장 / 인쇄</button>
   </div>
+
+  <article class="report-sheet" id="report-sheet">
+    <header class="report-head">
+      <div>
+        <p class="report-head__org">AI OUTPUT AUDIT SYSTEM</p>
+        <h1>AI 산출물 감리 보고서</h1>
+        <p class="report-head__no">보고서 번호: <span id="report-no"></span></p>
+      </div>
+      <div class="report-stamp" aria-hidden="true">
+        <svg viewBox="0 0 200 200">
+          <circle cx="100" cy="100" r="93" fill="none" stroke="currentColor" stroke-width="6"/>
+          <circle cx="100" cy="100" r="80" fill="none" stroke="currentColor" stroke-width="2"/>
+          <path id="report-stamp-arc" d="M 38,100 a 62,62 0 1,1 124,0 a 62,62 0 1,1 -124,0" fill="none"/>
+          <text class="stamp__arc"><textPath href="#report-stamp-arc" startOffset="6">AI OUTPUT AUDITOR · TRUSTED</textPath></text>
+          <text class="stamp__ko" x="100" y="103" text-anchor="middle">감 리</text>
+          <text class="stamp__ko" x="100" y="148" text-anchor="middle">완 료</text>
+        </svg>
+      </div>
+    </header>
+
+    <table class="report-meta">
+      <tr><th>감리 일시</th><td id="report-date"></td><th>문서 유형</th><td id="report-doctype"></td></tr>
+      <tr><th>신뢰 점수</th><td id="report-score"></td><th>감리 판정</th><td id="report-verdict"></td></tr>
+    </table>
+
+    <h2>1. 문서 요약</h2>
+    <p id="report-summary"></p>
+
+    <h2>2. 발견 사항</h2>
+    <table class="report-findings" id="report-findings">
+      <thead><tr><th>구분</th><th>위험도</th><th>문제 구절</th><th>지적 사항 및 권고</th></tr></thead>
+      <tbody></tbody>
+    </table>
+
+    <h2>3. 종합 의견</h2>
+    <p id="report-overall"></p>
+
+    <footer class="report-sign">
+      <p>본 감리 보고서는 위 산출물에 대한 검증 결과이며, 감리사는 그 결과에 책임을 집니다.</p>
+      <div class="report-sign__row">
+        <span id="report-date-footer"></span>
+        <span class="report-sign__name">AI 결과물 감리사 <b class="sig">란하</b> <span class="sig-check">✓</span> (서명)</span>
+      </div>
+    </footer>
+  </article>
+</div>
+
+<script src="demo.js"></script>
 </body>
 </html>
