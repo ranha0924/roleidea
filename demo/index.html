@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI 감리 시스템 — AI Output Auditor</title>
+  <title>감리사 워크벤치 — Auditor's Workbench</title>
   <link rel="stylesheet" href="../css/fonts.css">
   <link rel="stylesheet" href="demo.css">
 </head>
@@ -16,7 +16,7 @@
     <a class="topbar__back" href="../">← 발표로</a>
     <div class="topbar__title">
       <span class="topbar__logo">✓</span>
-      AI 감리 시스템 <small>AI Output Auditor — Prototype</small>
+      감리사 워크벤치 <small>Auditor's Workbench — AI 결과물 감리사의 업무 도구</small>
     </div>
     <button class="topbar__settings" id="btn-settings" type="button">⚙ API 설정</button>
   </header>
@@ -70,8 +70,8 @@
   <main class="screen" id="screen-loading" hidden>
     <section class="panel panel--center">
       <div class="spinner"></div>
-      <h2 id="loading-msg">AI 감리 분석 중…</h2>
-      <p class="panel__desc">환각 · 편향 · 법적 리스크를 항목별로 검증하고 있습니다</p>
+      <h2 id="loading-msg">AI 1차 분석 중…</h2>
+      <p class="panel__desc">환각 · 편향 · 법적 리스크 의심 구절을 선별하고 있습니다 — 확정은 감리사가 합니다</p>
       <ul class="loading-steps" id="loading-steps">
         <li>사실 주장 및 인용 추출</li>
         <li>환각(실존하지 않는 판례·출처) 검증</li>
@@ -125,7 +125,7 @@
   <article class="report-sheet" id="report-sheet">
     <header class="report-head">
       <div>
-        <p class="report-head__org">AI OUTPUT AUDIT SYSTEM</p>
+        <p class="report-head__org">AUDITOR'S WORKBENCH</p>
         <h1>AI 산출물 감리 보고서</h1>
         <p class="report-head__no">보고서 번호: <span id="report-no"></span></p>
       </div>

@@ -1,4 +1,4 @@
-/* AI 감리 시스템 데모 — Claude API 브라우저 직접 호출 */
+/* 감리사 워크벤치 (Auditor's Workbench) — Claude API 브라우저 직접 호출 */
 (function () {
   "use strict";
 
