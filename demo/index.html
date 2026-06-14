@@ -33,13 +33,20 @@
   <section class="panel settings" id="settings-panel" hidden>
     <h2>Anthropic API 키 설정</h2>
     <p class="settings__note">
-      키는 이 브라우저의 localStorage에만 저장되며 Anthropic API 외 어디에도 전송되지 않습니다.
+      PIN을 설정하면 서버에 키가 저장되어, 기기가 바뀌어도 PIN만 입력하면 키가 자동으로 불러와집니다.
       키 발급: <b>console.anthropic.com → API Keys</b>
     </p>
     <div class="settings__row">
       <input type="password" id="input-api-key" placeholder="sk-ant-..." autocomplete="off">
+      <input type="password" id="input-pin" placeholder="PIN (4자 이상)" autocomplete="off" style="max-width:160px">
       <button class="btn btn--primary" id="btn-save-key" type="button">저장</button>
       <button class="btn btn--ghost" id="btn-clear-key" type="button">삭제</button>
+    </div>
+    <hr style="border:none;border-top:1px solid rgba(255,255,255,.1);margin:12px 0">
+    <p class="settings__note">다른 기기에서? PIN만 입력하고 불러오기를 누르세요.</p>
+    <div class="settings__row">
+      <input type="password" id="input-pin-load" placeholder="PIN 입력" autocomplete="off" style="max-width:160px">
+      <button class="btn btn--primary" id="btn-load-key" type="button">불러오기</button>
     </div>
     <p class="settings__status" id="key-status"></p>
   </section>

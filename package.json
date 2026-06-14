@@ -1,0 +1,20 @@
+{
+  "name": "roleidea",
+  "version": "1.0.0",
+  "description": "경희대학교 미래직업 아이디어톤 발표용 웹사이트 프레젠테이션 (발표자: 란하, 2026. 6. 14.)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://local_proxy@127.0.0.1:39367/git/ranha0924/roleidea"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@upstash/redis": "^1.38.0",
+    "express": "^5.2.1"
+  }
+}
