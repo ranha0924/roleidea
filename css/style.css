@@ -951,11 +951,6 @@ body {
   font-weight: 800;
   color: var(--coral);
 }
-.closing__pledge {
-  font-size: clamp(17px, 1.5vw, 28px);
-  font-weight: 700;
-  color: var(--gold);
-}
 .closing__thanks {
   font-size: clamp(15px, 1.2vw, 22px);
   color: rgba(255, 255, 255, 0.72);
