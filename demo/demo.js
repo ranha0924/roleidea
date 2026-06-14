@@ -158,17 +158,34 @@
   // HTTP 헤더에는 ASCII만 허용 — 한글·공백·보이지 않는 문자가 섞이면 fetch가 거부함
   var VALID_KEY_RE = /^[\x21-\x7E]+$/;
 
-  // URL 해시로 키 전달: #key=sk-ant-... → localStorage에 저장 후 해시 제거
-  (function injectKeyFromHash() {
+  // URL 해시로 키/PIN 자동 주입: #key=sk-ant-... 또는 #pin=1234
+  (function injectFromHash() {
     var hash = location.hash;
     if (!hash) return;
-    var match = hash.match(/[#&]key=([^&]+)/);
-    if (!match) return;
-    var key = decodeURIComponent(match[1]).replace(/[\s​-‍﻿]+/g, "");
-    if (VALID_KEY_RE.test(key)) {
-      localStorage.setItem(KEY_STORAGE, key);
+
+    // #key=... → 키를 직접 localStorage에 저장
+    var keyMatch = hash.match(/[#&]key=([^&]+)/);
+    if (keyMatch) {
+      var key = decodeURIComponent(keyMatch[1]).replace(/[\s​-‍﻿]+/g, "");
+      if (VALID_KEY_RE.test(key)) {
+        localStorage.setItem(KEY_STORAGE, key);
+      }
     }
-    // 브라우저 주소창·히스토리에서 키 제거
+
+    // #pin=... → 서버에서 키 자동 불러오기
+    var pinMatch = hash.match(/[#&]pin=([^&]+)/);
+    if (pinMatch && !keyMatch) {
+      var pin = decodeURIComponent(pinMatch[1]);
+      fetch("/api/key?pin=" + encodeURIComponent(pin))
+        .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+        .then(function (data) {
+          localStorage.setItem(KEY_STORAGE, data.apiKey);
+          refreshKeyStatus();
+        })
+        .catch(function () {});
+    }
+
+    // 주소창에서 민감 정보 제거
     if (history.replaceState) {
       history.replaceState(null, "", location.pathname + location.search);
     } else {
