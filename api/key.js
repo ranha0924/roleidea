@@ -25,6 +25,9 @@ async function redisDel(key) {
 }
 
 module.exports = async function handler(req, res) {
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
   try {
     if (req.method === "POST") {
       var pin = (req.body.pin || "").trim();
