@@ -267,84 +267,52 @@ body {
 }
 
 /* ============================================================
-   SECTION 2 — 개인 스토리
+   SECTION 2 — 내 관점 (직업 변형 체인)
    ============================================================ */
 
-.story {
+.chains {
   display: flex;
   flex-direction: column;
-  gap: 0;
-  margin-bottom: clamp(20px, 2.2vw, 38px);
+  gap: clamp(14px, 1.5vw, 26px);
+  margin-bottom: clamp(22px, 2.4vw, 42px);
 }
-.story__scene {
-  display: flex;
-  align-items: flex-start;
-  gap: clamp(16px, 1.6vw, 28px);
-  padding: clamp(20px, 2vw, 36px);
-  border-radius: var(--radius);
+.chain {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr;
+  align-items: center;
+  gap: clamp(10px, 1.1vw, 22px);
 }
-.story__scene--before {
+.chain__item {
   background: var(--card);
   border: 1.5px solid var(--line);
-  border-radius: var(--radius) var(--radius) 0 0;
+  border-radius: var(--radius);
+  padding: clamp(14px, 1.4vw, 24px) clamp(14px, 1.2vw, 22px);
+  text-align: center;
 }
-.story__scene--after {
-  background: rgba(249, 97, 103, 0.06);
-  border: 1.5px solid rgba(249, 97, 103, 0.25);
-  border-top: none;
-  border-radius: 0 0 var(--radius) var(--radius);
-}
-.story__icon {
-  font-size: clamp(30px, 2.8vw, 48px);
-  line-height: 1;
-  flex-shrink: 0;
-}
-.story__moment {
-  font-size: clamp(12px, 0.9vw, 16px);
-  font-weight: 800;
-  letter-spacing: 0.1em;
+.chain__item .era {
+  display: block;
+  font-size: clamp(11px, 0.78vw, 14px);
+  font-weight: 700;
+  letter-spacing: 0.12em;
   color: var(--muted);
-  margin-bottom: 6px;
+  margin-bottom: 5px;
 }
-.story__scene--after .story__moment { color: var(--coral); }
-.story__body {
-  font-size: clamp(16px, 1.35vw, 25px);
-  line-height: 1.6;
+.chain__item .job {
+  font-size: clamp(15px, 1.25vw, 23px);
+  font-weight: 700;
   color: var(--ink);
 }
-.story__body b { color: var(--navy); }
-.story__scene--after .story__body b { color: var(--coral); }
-.story__turn {
-  display: flex;
-  justify-content: center;
-  position: relative;
-  z-index: 1;
+.chain__item--now {
+  background: var(--navy);
+  border-color: var(--navy);
 }
-.story__turn-mark {
-  display: inline-block;
-  font-size: clamp(14px, 1.1vw, 20px);
+.chain__item--now .era { color: var(--gold); }
+.chain__item--now .job { color: var(--white); }
+.chain__arrow {
+  font-size: clamp(18px, 1.6vw, 30px);
   font-weight: 800;
-  color: var(--white);
-  background: var(--coral);
-  border-radius: 999px;
-  padding: 6px 24px;
-  margin: -10px 0;
-  box-shadow: 0 4px 16px rgba(249, 97, 103, 0.35);
+  color: var(--coral);
 }
-.story__insight {
-  text-align: center;
-  padding: clamp(18px, 2vw, 34px);
-  border-radius: var(--radius);
-  background: linear-gradient(90deg, rgba(249, 200, 70, 0.16), rgba(249, 97, 103, 0.12));
-}
-.story__insight p {
-  font-size: clamp(18px, 1.7vw, 32px);
-  font-weight: 800;
-  color: var(--navy);
-  line-height: 1.5;
-}
-.story__insight .accent { color: var(--coral); }
-
 .punch {
   font-size: clamp(18px, 1.7vw, 32px);
   font-weight: 800;
@@ -1010,6 +978,8 @@ body {
   body { overflow: auto; }
   .deck { height: auto; overflow: visible; scroll-snap-type: none; }
   .slide { height: auto; min-height: 100vh; min-height: 100dvh; padding: 56px 22px; }
+  .chain { grid-template-columns: 1fr; }
+  .chain__arrow { transform: rotate(90deg); justify-self: center; }
   .data-grid, .define-grid, .alert-cards, .timeline, .bm-grid { grid-template-columns: 1fr; }
   .timeline { padding-top: 0; }
   .timeline::before, .tnode::before { display: none; }
