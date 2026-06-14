@@ -586,6 +586,19 @@ body {
   border-radius: 999px;
   padding: 7px 16px;
 }
+.define-card__sub {
+  font-size: clamp(12px, 0.9vw, 16px);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+.chips--skill { gap: 8px; }
+.chip--skill {
+  background: rgba(249, 200, 70, 0.14);
+  border-color: rgba(249, 200, 70, 0.5);
+  color: var(--ink);
+  font-size: clamp(12px, 0.88vw, 15px);
+}
 .define-card__liability {
   font-size: clamp(13px, 1vw, 18px);
   color: var(--muted);
