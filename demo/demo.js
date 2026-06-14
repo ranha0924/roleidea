@@ -194,18 +194,71 @@
     refreshKeyStatus();
   });
   $("btn-save-key").addEventListener("click", function () {
-    // 복사 과정에서 딸려온 공백·줄바꿈·제로폭 문자 제거
     var v = keyInput.value.replace(/[\s​-‍﻿]+/g, "");
     if (!v) { refreshKeyStatus(); return; }
     if (!VALID_KEY_RE.test(v)) {
-      keyStatus.textContent = "✗ 키에 허용되지 않는 문자(한글 또는 특수문자)가 섞여 있습니다. 콘솔의 복사 버튼으로 키만 다시 복사해주세요.";
+      keyStatus.textContent = "✗ 키에 허용되지 않는 문자(한글 또는 특수문자)가 섞여 있습니다.";
       keyStatus.className = "settings__status bad";
       return;
     }
     localStorage.setItem(KEY_STORAGE, v);
+
+    // PIN이 있으면 서버에도 저장
+    var pin = $("input-pin").value.trim();
+    if (pin.length >= 4) {
+      fetch("/api/key", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pin: pin, apiKey: v }),
+      }).then(function (r) { return r.json(); }).then(function () {
+        keyStatus.textContent = "✓ 키 저장 완료 (로컬 + 서버). 다른 기기에서 PIN으로 불러올 수 있습니다.";
+        keyStatus.className = "settings__status ok";
+      }).catch(function () {
+        keyStatus.textContent = "✓ 로컬 저장 완료. 서버 저장 실패 — 서버가 실행 중인지 확인하세요.";
+        keyStatus.className = "settings__status ok";
+      });
+    } else if (pin.length > 0) {
+      keyStatus.textContent = "✓ 로컬 저장 완료. PIN은 4자 이상이어야 서버에 저장됩니다.";
+      keyStatus.className = "settings__status ok";
+    }
+
     keyInput.value = "";
+    $("input-pin").value = "";
     refreshKeyStatus();
   });
+
+  // PIN으로 서버에서 키 불러오기
+  $("btn-load-key").addEventListener("click", function () {
+    var pin = $("input-pin-load").value.trim();
+    if (!pin) {
+      keyStatus.textContent = "✗ PIN을 입력해주세요.";
+      keyStatus.className = "settings__status bad";
+      return;
+    }
+    keyStatus.textContent = "불러오는 중…";
+    keyStatus.className = "settings__status";
+    fetch("/api/key?pin=" + encodeURIComponent(pin))
+      .then(function (r) {
+        if (!r.ok) throw new Error(r.status === 404 ? "not_found" : "error");
+        return r.json();
+      })
+      .then(function (data) {
+        localStorage.setItem(KEY_STORAGE, data.apiKey);
+        $("input-pin-load").value = "";
+        refreshKeyStatus();
+        keyStatus.textContent = "✓ 서버에서 키를 불러와 저장했습니다!";
+        keyStatus.className = "settings__status ok";
+      })
+      .catch(function (e) {
+        if (e.message === "not_found") {
+          keyStatus.textContent = "✗ 해당 PIN에 저장된 키가 없습니다.";
+        } else {
+          keyStatus.textContent = "✗ 서버 연결 실패 — 서버가 실행 중인지 확인하세요.";
+        }
+        keyStatus.className = "settings__status bad";
+      });
+  });
+
   $("btn-clear-key").addEventListener("click", function () {
     localStorage.removeItem(KEY_STORAGE);
     refreshKeyStatus();
